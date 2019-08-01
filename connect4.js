@@ -16,7 +16,7 @@ let board = []; // array of rows, each row is array of cells  (board[y][x])
  */
 
 function makeBoard() {
-  // TODO: set "board" to empty HEIGHT x WIDTH matrix array
+  //set "board" to empty HEIGHT x WIDTH matrix array
   for (let i = 0; i < WIDTH; i++) {
     board[i] = []; // create an array for the rows
     for (let j = 0; j < HEIGHT; j++) {
@@ -43,7 +43,7 @@ function makeHtmlBoard() {
     headCell.setAttribute("id", x);
     top.append(headCell);
   }
-  board.append(top);
+  boardNode.append(top);
 
   // create the playing table of td and tr elements
   for (let y = 0; y < HEIGHT; y++) {
@@ -51,29 +51,45 @@ function makeHtmlBoard() {
     for (let x = 0; x < WIDTH; x++) {
       const cell = document.createElement("td"); //  create cell in each row
       cell.setAttribute("id", `${y}-${x}`); // assigning unique id according to index of td element
-      row.append(cell); 
+      row.append(cell);
     }
-    board.append(row);
+    boardNode.append(row);
   }
 }
 
 /** findSpotForCol: given column x, return top empty y (null if filled) */
 
 function findSpotForCol(x) {
-  // TODO: write the real version of this, rather than always returning 0
-  return 0;
+  // goes up the column to look for the next spot to land
+
+  for (let i = HEIGHT - 1; i >= 0; i--) {
+    if (board[i][x] === null) {
+      return i;
+    }
+  }
+  return null;
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
 
-function placeInTable(y, x) {
-  // TODO: make a div and insert into correct table cell
+function placeInTable(y, x) { // x is row coordinate
+  //  make a div and insert into correct table cell
+  let cellDiv = document.createElement("div");
+  let targetCell = document.getElementById(`${y}-${x}`);
+
+  targetCell.appendChild(cellDiv);
+  cellDiv.classList.add("piece");
+  if (currPlayer == 1) {
+    cellDiv.classList.add("p1");
+  } else {
+    cellDiv.classList.add("p2");
+  }
 }
 
 /** endGame: announce game end */
 
 function endGame(msg) {
-  // TODO: pop up alert message
+  alert(msg);
 }
 
 /** handleClick: handle click of column top to play piece */
@@ -89,19 +105,20 @@ function handleClick(evt) {
   }
 
   // place piece in board and add to HTML table
-  // TODO: add line to update in-memory board
+  // add line to update in-memory board
   placeInTable(y, x);
+  board[y][x] = currPlayer;
 
   // check for win
   if (checkForWin()) {
     return endGame(`Player ${currPlayer} won!`);
   }
-  
-  // check for tie
-  // TODO: check if all cells in board are filled; if so call, call endGame
 
+  // check for tie
+  // check if all cells in board are filled; if so call, call endGame
+  (currPlayer == 1) ? currPlayer = 2 : currPlayer = 1;
   // switch players
-  // TODO: switch currPlayer 1 <-> 2
+  // switch currPlayer 1 <-> 2
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
@@ -114,12 +131,12 @@ function checkForWin() {
     //  - returns true if all are legal coordinates & all match currPlayer
 
     return cells.every(
-        ([y, x]) =>
-            y >= 0 &&
-            y < HEIGHT &&
-            x >= 0 &&
-            x < WIDTH &&
-            board[y][x] === currPlayer
+      ([y, x]) =>
+        y >= 0 &&
+        y < HEIGHT &&
+        x >= 0 &&
+        x < WIDTH &&
+        board[y][x] === currPlayer
     );
   }
 
