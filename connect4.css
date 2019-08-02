@@ -13,12 +13,14 @@
   margin: 5px;
   width: 80%;
   height: 80%;
+  animation-duration: .5s;
 }
 
 /* TODO: make pieces red/blue,  depending on player 1/2 piece */
 .p1 {
   background-color: red;
 }
+
 .p2 {
   background-color: blue;
 }
@@ -31,4 +33,14 @@
 
 #column-top td:hover {
   background-color: gold;
+}
+
+.piece-fall {
+  animation-name: piece-fall;
+  animation-timing-function: linear;
+}
+
+@keyframes piece-fall {
+  0%   { transform: translateY(-400px); }
+  100% { transform: translateY(0); }
 }

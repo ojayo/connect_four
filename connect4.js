@@ -78,12 +78,12 @@ function placeInTable(y, x) { // x is row coordinate
   let targetCell = document.getElementById(`${y}-${x}`);
 
   targetCell.appendChild(cellDiv);
-  cellDiv.classList.add("piece");
-  if (currPlayer == 1) {
-    cellDiv.classList.add("p1");
-  } else {
-    cellDiv.classList.add("p2");
-  }
+  cellDiv.classList.add("piece", "piece-fall", `p${currPlayer}`);
+  // if (currPlayer === 1) {
+  //   cellDiv.classList.add("p1");
+  // } else {
+  //   cellDiv.classList.add("p2");
+  // }
 }
 
 /** endGame: announce game end */
@@ -111,12 +111,21 @@ function handleClick(evt) {
 
   // check for win
   if (checkForWin()) {
-    return endGame(`Player ${currPlayer} won!`);
+    // remove event listener after game is won
+    let top = document.getElementById("column-top");
+    top.removeEventListener("click", handleClick);
+
+    //have the last piece fall before the win message
+    return setTimeout(function() { 
+      endGame(`Player ${currPlayer} won!`);
+    }, 1000)
+    
+
   }
 
   // check for tie
   // check if all cells in board are filled; if so call, call endGame
-  (currPlayer == 1) ? currPlayer = 2 : currPlayer = 1;
+  currPlayer = (currPlayer === 1) ? 2 : 1;
   // switch players
   // switch currPlayer 1 <-> 2
 }
@@ -142,18 +151,18 @@ function checkForWin() {
 
   // TODO: read and understand this code. Add comments to help you.
 
-  for (let y = 0; y < HEIGHT; y++) {
-    for (let x = 0; x < WIDTH; x++) {
-      let horiz = [[y, x], [y, x + 1], [y, x + 2], [y, x + 3]];
-      let vert = [[y, x], [y + 1, x], [y + 2, x], [y + 3, x]];
-      let diagDR = [[y, x], [y + 1, x + 1], [y + 2, x + 2], [y + 3, x + 3]];
-      let diagDL = [[y, x], [y + 1, x - 1], [y + 2, x - 2], [y + 3, x - 3]];
+  for (let y = 0; y < HEIGHT; y++) { // for every element starting from top
+    for (let x = 0; x < WIDTH; x++) { // for every element starting from the left
+      let horiz = [[y, x], [y, x + 1], [y, x + 2], [y, x + 3]]; // check four cells in a row (changing x)
+      let vert = [[y, x], [y + 1, x], [y + 2, x], [y + 3, x]]; // check four cells in a column (changing y)
+      let diagDR = [[y, x], [y + 1, x + 1], [y + 2, x + 2], [y + 3, x + 3]]; // check downward diagonal by incrementing both x and y
+      let diagDL = [[y, x], [y + 1, x - 1], [y + 2, x - 2], [y + 3, x - 3]]; // check downward diagonal by decrementing both x and y
 
-      if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
-        return true;
+      if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) { // check if any of those variables are true
+        return true; // if so, return
       }
     }
-  } // will it ever return false?
+  }
 }
 
 makeBoard();
